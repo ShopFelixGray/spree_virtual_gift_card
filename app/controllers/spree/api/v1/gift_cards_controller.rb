@@ -1,4 +1,4 @@
-class Spree::Api::GiftCardsController < Spree::Api::BaseController
+class Spree::Api::V1::GiftCardsController < Spree::Api::BaseController
 
   def redeem
     redemption_code = Spree::RedemptionCodeGenerator.format_redemption_code_for_lookup(params[:redemption_code] || "")
