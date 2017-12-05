@@ -33,14 +33,14 @@ module Spree
           updater.run_hooks
           
           touch :completed_at
+
+          gift_cards.each_with_index do |gift_card, index|
+            gift_card.make_redeemable!(purchaser: user, inventory_unit: inventory_units[index])
+          end
           
           deliver_order_confirmation_email unless confirmation_delivered?
           
           consider_risk
-                
-          gift_cards.each_with_index do |gift_card, index|
-            gift_card.make_redeemable!(purchaser: user, inventory_unit: inventory_units[index])
-          end
         end
   
         def send_gift_card_emails

@@ -54,7 +54,7 @@ class Spree::VirtualGiftCard < Spree::Base
   end
 
   def can_deactivate?
-    order.completed? && order.paid? && !deactivated?
+    order.completed? && order.paid? && !deactivated? && !redeemed?
   end
 
   def memo
