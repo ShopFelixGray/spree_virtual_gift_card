@@ -50,12 +50,11 @@ class Spree::VirtualGiftCard < Spree::Base
   end
 
   def deactivate
-    update_attributes(redeemable: false, deactivated_at: Time.now) &&
-      cancel_and_reimburse_inventory_unit
+    update_attributes(redeemable: false, deactivated_at: Time.now)
   end
 
   def can_deactivate?
-    order.completed? && order.paid? && !deactivated?
+    order.completed? && order.paid? && !deactivated? && !redeemed?
   end
 
   def memo
@@ -117,12 +116,6 @@ class Spree::VirtualGiftCard < Spree::Base
   end
 
   private
-
-  def cancel_and_reimburse_inventory_unit
-    cancellation = Spree::OrderCancellations.new(line_item.order)
-    cancellation.cancel_unit(inventory_unit)
-    !!cancellation.reimburse_units([inventory_unit])
-  end
 
   def generate_unique_redemption_code
     redemption_code = Spree::RedemptionCodeGenerator.generate_redemption_code
