@@ -1,9 +1,11 @@
 module Spree
     Order.class_eval do
-  
 
-        #Spree::Order.state_machine.after_transition to: :complete, do: :send_gift_card_emails
-  
+        state_machine.after_transition(
+          to: :complete,
+          do: :send_gift_card_emails
+        )
+
         has_many :gift_cards, through: :line_items
   
         def gift_card_match(line_item, options)
