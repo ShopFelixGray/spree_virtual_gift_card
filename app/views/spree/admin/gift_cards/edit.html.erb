@@ -1,62 +1,75 @@
 <script async='true'>GiftCards.setAdminDatepicker()</script>
 
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => '' } %>
+
 <% content_for :page_title do %>
-  <%= Spree.t("admin.gift_cards.editing_gift_card") %>
+  / <%= Spree.t("admin.gift_cards.gift_card") %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => '' } %>
+<% content_for :page_actions do %>
+  <% if @gift_card.can_deactivate? && can?(:deactivate, @gift_card) %>
+    <div class="form-buttons filter-actions actions gift-card-actions" data-hook="buttons">
+        <%= button_link_to "Send Email", send_email_admin_order_gift_card_path(@order, @gift_card), icon: 'envelope', :method => 'put', :data => { :confirm => "Any changes that have not been updated will not send" } %>
+        <%= button_link_to "Deactivate", deactivate_admin_order_gift_card_path(@order, @gift_card), icon: 'cancel',  :method => 'put', :data => { :confirm => "Are you sure you want to deactivate the gift card?" } %>
+    </div>
+  <% end %>
+<% end %>
+
 
 <%= form_for @gift_card, url: admin_order_gift_card_path(@order, @gift_card) do |f| %>
   <fieldset>
-    <legend align="center"><%= Spree.t("admin.gift_cards.gift_card_details") %></legend>
     <div class="row">
-      <label>Amount:</label>
-      <%= @gift_card.formatted_amount %>
+      <div class="col-md-6">
+        <label>Amount:</label>
+        <%= @gift_card.formatted_amount %>
+      </div>
     </div>
 
     <div class="row">
-      <label>Redemption Code:</label>
-      <%= @gift_card.redemption_code %>
+      <div class="col-md-6">
+        <label>Redemption Code:</label>
+        <%= @gift_card.redemption_code %>
+      </div>
     </div>
 
     <div class="row">
-      <div class="alpha twelve columns">
+      <div class="col-md-6">
         <%= f.field_container :recipient_name do %>
         <%= f.label :recipient_name, Spree.t('admin.gift_cards.recipient_name') %> <br />
-        <%= f.text_field :recipient_name, class: 'fullwidth' %>
+        <%= f.text_field :recipient_name, :class => 'form-control' %>
         <% end %>
       </div>
     </div>
 
     <div class="row">
-      <div class="alpha twelve columns">
+      <div class="col-md-6">
         <%= f.field_container :recipient_email do %>
         <%= f.label :recipient_email, Spree.t('admin.gift_cards.recipient_email') %> <br />
-        <%= f.text_field :recipient_email, class: 'fullwidth' %>
+        <%= f.text_field :recipient_email, :class => 'form-control' %>
         <% end %>
       </div>
     </div>
 
     <div class="row">
-      <div class="alpha twelve columns">
+      <div class="col-md-6">
         <%= f.field_container :purchaser_name do %>
         <%= f.label :purchaser_name, Spree.t('admin.gift_cards.purchaser_name') %> <br />
-        <%= f.text_field :purchaser_name, class: 'fullwidth' %>
+        <%= f.text_field :purchaser_name, :class => 'form-control' %>
         <% end %>
       </div>
     </div>
 
     <div class="row">
-      <div class="alpha twelve columns">
+      <div class="col-md-6">
         <%= f.field_container :gift_message do %>
         <%= f.label :gift_message, Spree.t('admin.gift_cards.gift_message') %> <br />
-        <%= f.text_area :gift_message, class: 'fullwidth', maxlength: '140' %>
+        <%= f.text_area :gift_message, :class => 'form-control' , maxlength: '140' %>
         <% end %>
       </div>
     </div>
 
     <div class="row">
-      <div class="alpha twelve columns">
+      <div class="col-md-6">
         <% if @gift_card.sent_at %>
           <div class="last-email-sent">
             Email last sent at: <%= @gift_card.formatted_sent_at %>
@@ -64,7 +77,7 @@
         <% else %>
           <%= f.field_container :send_email_at do %>
           <%= f.label :send_email_at, Spree.t('admin.gift_cards.send_email_at') %> <br />
-          <%= f.text_field :send_email_at, :class => 'datepicker datepicker-from giftcard-datepicker' %>
+          <%= f.text_field :send_email_at, :class => 'datepicker datepicker-from form-control' %>
           <% end %>
         <% end %>
 
@@ -76,14 +89,10 @@
       </div>
     </div>
 
-    <%= render :partial => 'spree/admin/shared/edit_resource_links', locals: { collection_url: edit_admin_order_path(@order) } %>
+    <div class="form-actions text-center well">
+      <%= render :partial => 'spree/admin/shared/edit_resource_links', locals: { collection_url: edit_admin_order_path(@order) } %>
+    </div>
   </fieldset>
 <% end %>
 
 
-<% if @gift_card.can_deactivate? && can?(:deactivate, @gift_card) %>
-  <div class="form-buttons filter-actions actions gift-card-actions" data-hook="buttons">
-      <%= button_link_to "Send email now", send_email_admin_order_gift_card_path(@order, @gift_card), :icon => 'email', :method => 'put', :data => { :confirm => "Any changes that have not been updated will not send" } %>
-      <%= button_link_to "Deactivate", deactivate_admin_order_gift_card_path(@order, @gift_card), :icon => 'ban', :method => 'put', :data => { :confirm => "Are you sure you want to deactivate the gift card?" } %>
-  </div>
-<% end %>
