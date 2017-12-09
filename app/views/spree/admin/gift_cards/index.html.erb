@@ -1,13 +1,49 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:listing_gift_cards) %>
+  <%= plural_resource_name(Spree::VirtualGiftCard) %>
 <% end %>
 
-<%= render partial: 'lookup_form' %>
+<% content_for :table_filter do %>
+  <div class='gift-card-code-lookup'>
+    <%= search_form_for @search, url: admin_gift_cards_path(@search) do |f| %>
+      <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <%= label_tag nil, Spree.t(:redemption_code) %>
+          <%= f.text_field :redemption_code_cont, class: 'form-control' %>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <%= label_tag nil, Spree.t(:recipient_email)  %>
+          <%= f.text_field :recipient_email_cont, class: 'form-control'  %>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <%= label_tag nil, Spree.t(:order_number, :number => '') %>
+          <%= f.text_field :line_item_order_number_cont, class: 'form-control'  %>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <%= label_tag nil, Spree.t(:send_date)  %>
+          <%= f.text_field :sent_at_or_send_email_at_is, :class => 'datepicker datepicker-from form-control' , size: 25 %>
+        </div>
+      </div>
+      </div>
 
-<%= paginate @gift_cards %>
+      <div class="form-actions">
+        <%= button Spree.t(:filter_results), 'search' %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+
+<%= render 'spree/admin/shared/index_table_options', collection: @gift_cards, simple: true %>
 
 <% if @gift_cards.any? %>
-  <table class="index">
+  <table class="table">
     <thead>
       <tr>
         <th class="align-center">Redemption Code</th>
@@ -41,6 +77,10 @@
       <% end %>
     </tbody>
   </table>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::VirtualGiftCard)) %>
+  </div>
 <% end %>
 
-<%= paginate @gift_cards %>
+<%= render 'spree/admin/shared/index_table_options', collection: @gift_cards, simple: true %>
