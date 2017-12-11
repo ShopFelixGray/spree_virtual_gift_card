@@ -1,5 +1,12 @@
 class Spree::Api::V1::GiftCardsController < Spree::Api::BaseController
 
+  def send_emails
+    Spree::VirtualGiftCard.where(send_email_at: Date.today, sent_at: nil, redeemable: true).find_each do |gift_card|
+      gift_card.send_email
+    end
+    render status: 200, json: {}
+  end
+
   def redeem
     redemption_code = Spree::RedemptionCodeGenerator.format_redemption_code_for_lookup(params[:redemption_code] || "")
     @gift_card = Spree::VirtualGiftCard.active_by_redemption_code(redemption_code)
