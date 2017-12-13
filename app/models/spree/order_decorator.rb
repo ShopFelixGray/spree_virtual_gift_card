@@ -1,11 +1,6 @@
 module Spree
     Order.class_eval do
 
-        state_machine.after_transition(
-          to: :complete,
-          do: :send_gift_card_emails
-        )
-
         has_many :gift_cards, through: :line_items
   
         def gift_card_match(line_item, options)
@@ -33,14 +28,28 @@ module Spree
           updater.run_hooks
           
           touch :completed_at
-
-          gift_cards.each_with_index do |gift_card, index|
-            gift_card.make_redeemable!(purchaser: user, inventory_unit: inventory_units[index])
-          end
           
           deliver_order_confirmation_email unless confirmation_delivered?
-          
+
           consider_risk
+
+          inventory_units = self.inventory_units
+
+          inventory_units.each do |inventory_unit|
+            gift_cards.each do |gift_card|
+              if inventory_unit.line_item == gift_card.line_item
+                gift_card.make_redeemable!(purchaser: user, inventory_unit: inventory_unit)
+              end
+            end
+          end
+
+          shipments.each do |shipment|
+            if shipment.has_gift_cards?
+              shipment.ship
+            end
+          end
+
+          send_gift_card_emails
         end
   
         def send_gift_card_emails

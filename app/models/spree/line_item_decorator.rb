@@ -12,5 +12,6 @@ module Spree
             def gift_card_details
               gift_cards.map(&:details)
             end
+
     end
 end
