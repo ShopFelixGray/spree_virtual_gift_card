@@ -34,3 +34,4 @@ en:
         gift_card_code: "Gift card code: %{code}"
         subject: "Your gift card code"
     listing_gift_cards: "Listing Gift Cards"
+    virtual_gift_card_delivery: "Virtual Gift Card Delivery"
