@@ -35,8 +35,12 @@ module Spree
 
           inventory_units = self.inventory_units
 
-          gift_cards.reverse_each.with_index do |gift_card, index|
-            gift_card.make_redeemable!(purchaser: user, inventory_unit: inventory_units[index])
+          inventory_units.each do |inventory_unit|
+            gift_cards.each do |gift_card|
+              if inventory_unit.line_item == gift_card.line_item
+                gift_card.make_redeemable!(purchaser: user, inventory_unit: inventory_unit)
+              end
+            end
           end
 
           shipments.each do |shipment|
