@@ -33,8 +33,16 @@ module Spree
 
           consider_risk
 
-          gift_cards.each_with_index do |gift_card, index|
+          inventory_units = self.inventory_units
+
+          gift_cards.reverse_each.with_index do |gift_card, index|
             gift_card.make_redeemable!(purchaser: user, inventory_unit: inventory_units[index])
+          end
+
+          shipments.each do |shipment|
+            if shipment.has_gift_cards?
+              shipment.ship
+            end
           end
 
           send_gift_card_emails
