@@ -2,8 +2,6 @@ module Spree
     Order.class_eval do
 
         has_many :gift_cards, through: :line_items
-
-        self.state_machine.after_transition to: :complete, do: :update_gift_cards
   
         def gift_card_match(line_item, options)
           return true unless line_item.gift_card?
@@ -14,8 +12,29 @@ module Spree
             gc_detail_set.superset?(options_set)
           end
         end
+  
+        def finalize!
+          all_adjustments.each{|a| a.close}
+          
+          # update payment and shipment(s) states, and save
+          updater.update_payment_state
+          shipments.each do |shipment|
+            shipment.update!(self)
+            shipment.finalize!
+          end
+          
+          updater.update_shipment_state
+          save!
+          updater.run_hooks
+          
+          touch :completed_at
+          
+          deliver_order_confirmation_email unless confirmation_delivered?
 
-        def update_gift_cards 
+          consider_risk
+
+          inventory_units = self.inventory_units
+
           inventory_units.each do |inventory_unit|
             gift_cards.each do |gift_card|
               if inventory_unit.line_item == gift_card.line_item

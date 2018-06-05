@@ -111,7 +111,7 @@ class Spree::VirtualGiftCard < Spree::Base
 
   def send_email
     Spree::GiftCardMailer.gift_card_email(self).deliver_later
-    update_attributes!(sent_at: Time.current)
+    update_attributes!(sent_at: DateTime.now)
   end
 
   private
