@@ -21,7 +21,7 @@ module Spree
       def remove_line_item(line_item, options = {})
         line_item.destroy!
         after_add_or_remove(line_item, options)
-        remove_gift_cards(line_item, quantity)
+        remove_gift_cards(line_item, line_item.quantity)
         line_item
       end
 
